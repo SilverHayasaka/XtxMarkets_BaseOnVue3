@@ -1,5 +1,5 @@
 <template>
-我是Home页面
+  我是Home页面
 </template>
 
 <script>
