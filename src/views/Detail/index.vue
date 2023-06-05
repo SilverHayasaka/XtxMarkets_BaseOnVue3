@@ -1,13 +1,13 @@
 <script setup>
 import {getDetail} from '@/apis/detail';
 import {onMounted, ref} from "vue";
-import {useRoute} from "vue-router";
+import {onBeforeRouteUpdate, useRoute} from "vue-router";
 import DetailHot from "./components/DetailHot.vue";
 
 const goods = ref([]);
 const route = useRoute();
-const getGoods = async () => {
-  const res = await getDetail(route.params.id)
+const getGoods = async (id = route.params.id) => {
+  const res = await getDetail(id)
   goods.value = res.data.result;
 }
 
@@ -15,9 +15,9 @@ onMounted(() => {
   getGoods();
 })
 
-const skuChange = (sku) => {
-  console.log(sku);
-}
+onBeforeRouteUpdate((to) => {
+  getGoods(to.params.id);
+})
 
 </script>
 
@@ -96,7 +96,7 @@ const skuChange = (sku) => {
                 </dl>
               </div>
               <!-- sku组件 -->
-              <XtxSku :goods="goods" @change="skuChange"/>
+              <XtxSku :goods="goods"/>
               <!-- 数据组件 -->
 
               <!-- 按钮组件 -->
