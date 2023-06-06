@@ -2,7 +2,7 @@ import {ref} from 'vue'
 import {defineStore} from 'pinia'
 import {getCategoryApi} from "@/apis/layout";
 
-export const useCategoryStore = defineStore('counter', () => {
+export const useCategoryStore = defineStore('Category', () => {
     //导航列表数据
     const categoryList = ref([]);
 
