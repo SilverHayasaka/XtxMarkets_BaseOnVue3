@@ -1,6 +1,6 @@
 <script setup>
 import {useCartStore} from "@/stores/cartStore";
-import {computed} from "vue";
+import {onMounted} from "vue";
 
 const cartStore = useCartStore();
 
@@ -11,6 +11,8 @@ const singleCheck = (i) => {
 const allCheck = () => {
   cartStore.allCheck();
 }
+
+onMounted(() => cartStore.updateNewList())
 
 </script>
 
@@ -85,7 +87,7 @@ const allCheck = () => {
       <!-- 操作栏 -->
       <div class="action">
         <div class="batch">
-          共 {{ cartStore.allCount }} 件商品，已选择 {{cartStore.selectedCount}} 件，商品合计：
+          共 {{ cartStore.allCount }} 件商品，已选择 {{ cartStore.selectedCount }} 件，商品合计：
           <span class="red">¥ {{ cartStore.selectedPrice }} </span>
         </div>
         <div class="total">
