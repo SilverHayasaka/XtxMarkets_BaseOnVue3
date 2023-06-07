@@ -1,27 +1,48 @@
 //封装购物车模块
 import {defineStore} from "pinia";
 import {computed, ref} from "vue";
+import {useUserStore} from "@/stores/userStore";
+import {insertCartAPI, findNewCartList, delCartAPI} from "@/apis/cart";
 
 export const useCartStore = defineStore('cart', () => {
     const cartList = ref([]);
+    const userStore = useUserStore();
+    const isLogin = computed(() => userStore.userInfo.token);
+
     //定义action
-    const addCart = (goods) => {
-        //添加购物车
-        //已添加，count+1
-        //未添加，push
-        const item = cartList.value.find((item) => goods.skuId === item.skuId);
-        if (item) {
-            //找到了
-            item.count++;
+    const addCart = async (goods) => {
+        const {skuId, count} = goods;
+        if (isLogin.value) {
+            await insertCartAPI({skuId, count});
+            updateNewList();
         } else {
-            cartList.value.push(goods);
+            //添加购物车
+            //已添加，count+1
+            //未添加，push
+            const item = cartList.value.find((item) => goods.skuId === item.skuId);
+            if (item) {
+                //找到了
+                item.count++;
+            } else {
+                cartList.value.push(goods);
+            }
         }
+
     }
 
-    const delCart = (skuId) => {
+    const delCart = async (skuId) => {
+        if (isLogin.value) {
+            await delCartAPI([skuId]);
+            updateNewList();
+        }
         const idx = cartList.value.findIndex((item) => skuId === item.skuId);
         if (cartList.value[idx].count > 1) cartList.value[idx].count--;
         else cartList.value.splice(idx, 1);
+    }
+
+    const updateNewList = async () => {
+        const res = await findNewCartList();
+        cartList.value = res.data.result;
     }
 
     //单选功能
@@ -40,6 +61,10 @@ export const useCartStore = defineStore('cart', () => {
                 item.selected = false;
             })
         }
+    }
+
+    const clearCart = () => {
+        cartList.value = [];
     }
 
     const isAll = computed(() => cartList.value.every((item) => item.selected))
@@ -62,6 +87,8 @@ export const useCartStore = defineStore('cart', () => {
         singleCheck,
         allCheck,
         addCart,
-        delCart
+        delCart,
+        clearCart,
+        updateNewList
     }
 }, {persist: true})
