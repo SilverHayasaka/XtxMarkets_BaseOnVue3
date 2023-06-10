@@ -41,8 +41,10 @@ export const useCartStore = defineStore('cart', () => {
     }
 
     const updateNewList = async () => {
-        const res = await findNewCartList();
-        cartList.value = res.data.result;
+        if (isLogin.value) {
+            const res = await findNewCartList();
+            cartList.value = res.data.result;
+        }
     }
 
     //单选功能
