@@ -1,8 +1,12 @@
 <script setup>
 import {useCartStore} from "@/stores/cartStore";
+import {useUserStore} from "@/stores/userStore";
+import {useRouter} from "vue-router";
 import {onMounted} from "vue";
 
 const cartStore = useCartStore();
+const userStore = useUserStore();
+const router = useRouter();
 
 const singleCheck = (i) => {
   cartStore.singleCheck(i.skuId);
@@ -10,6 +14,11 @@ const singleCheck = (i) => {
 
 const allCheck = () => {
   cartStore.allCheck();
+}
+
+const checkout = () => {
+  if(!userStore.userInfo.token)router.push('/login');
+  else router.push('/checkout')
 }
 
 onMounted(() => cartStore.updateNewList())
@@ -91,7 +100,7 @@ onMounted(() => cartStore.updateNewList())
           <span class="red">¥ {{ cartStore.selectedPrice }} </span>
         </div>
         <div class="total">
-          <el-button size="large" type="primary" @click="$router.push('/checkout')">下单结算</el-button>
+          <el-button size="large" type="primary" @click="checkout">下单结算</el-button>
         </div>
       </div>
     </div>
